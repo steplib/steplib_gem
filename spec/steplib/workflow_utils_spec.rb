@@ -110,7 +110,6 @@ describe Steplib::WorkflowUtils do
 			wf_data = Steplib::WorkflowUtils.create_workflow_from_step_versions(
 				steplib_step_verions,
 				wf_envs)
-			puts "wf_data: #{wf_data}"
 			# should be valid
 			expect{
 				Steplib::WorkflowValidator.validate_workflow!(wf_data)
