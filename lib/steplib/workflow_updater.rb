@@ -8,39 +8,59 @@ module Steplib
 			#
 			# of course this can only fill-out properties
 			#  which have a pre-defined valid default value
-			def set_defaults_for_missing_properties(workflow_data)
+			def set_defaults_for_missing_properties_in_workflow(workflow_data)
+				workflow_data = HashUtils.set_missing_defaults(workflow_data, [
+					# main arrays
+					{key: 'environments', value: []},
+					{key: 'steps', value: []},
+					])
+				#
+				# environments
 				workflow_data['environments'] = workflow_data['environments'].map { |an_env|
 					an_env = HashUtils.set_missing_defaults(an_env, [
 						{key: 'title', value: ''},
-						{key: 'is_expand', value: true}
+						{key: 'is_expand', value: true},
 						])
 					# return:
 					an_env
 				}
+				#
+				# steps
 				workflow_data['steps'] = workflow_data['steps'].map { |a_step|
-					a_step = HashUtils.set_missing_defaults(a_step, [
-						{key: 'name', value: ''},
-						{key: 'description', value: ''},
-						{key: 'icon_url_256', value: nil},
-						{key: 'project_type_tags', value: []},
-						{key: 'type_tags', value: []},
-						])
-					a_step['inputs'] = a_step['inputs'].map { |a_step_inp|
-						a_step_inp = HashUtils.set_missing_defaults(a_step_inp, [
-							{key: 'title', value: ''},
-							{key: 'description', value: ''},
-							{key: 'is_expand', value: true},
-							{key: 'is_required', value: false},
-							{key: 'value_options', value: []},
-							{key: 'is_dont_change_value', value: false},
-							])
-						# return:
-						a_step_inp
-					}
+					a_step = set_defaults_for_missing_properties_in_workflow_step(a_step)
 					# return:
 					a_step
 				}
 				return workflow_data
+			end
+
+			#
+			# similar to \a set_defaults_for_missing_properties_in_workflow
+			#  but for a single workflow-step
+			def set_defaults_for_missing_properties_in_workflow_step(workflow_step_data)
+				workflow_step_data = HashUtils.set_missing_defaults(workflow_step_data, [
+					{key: 'name', value: ''},
+					{key: 'description', value: ''},
+					{key: 'icon_url_256', value: nil},
+					{key: 'project_type_tags', value: []},
+					{key: 'type_tags', value: []},
+					# main arrays
+					{key: 'inputs', value: []},
+					{key: 'outputs', value: []},
+					])
+				workflow_step_data['inputs'] = workflow_step_data['inputs'].map { |a_step_inp|
+					a_step_inp = HashUtils.set_missing_defaults(a_step_inp, [
+						{key: 'title', value: ''},
+						{key: 'description', value: ''},
+						{key: 'is_expand', value: true},
+						{key: 'is_required', value: false},
+						{key: 'value_options', value: []},
+						{key: 'is_dont_change_value', value: false},
+						])
+					# return:
+					a_step_inp
+				}
+				return workflow_step_data
 			end
 
 			#

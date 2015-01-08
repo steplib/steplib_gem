@@ -106,19 +106,127 @@ describe Steplib::WorkflowUpdater do
 		end
 	end
 
-	describe '#set_defaults_for_missing_properties' do
-		it "should return the same data for a complete, valid workflow data" do
-			workflow_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
-
-			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties(@valid_workflow_data)
-			expect(res_data).to eq(workflow_data_copy)
-			expect(@valid_workflow_data).to eq(workflow_data_copy)
+	describe '#set_defaults_for_missing_properties_in_workflow_step' do
+		before(:each) do
+			# only the most inner, 'leaf' properties missing,
+			#  the main structure of this Workflow data is valid
+			@workflow_step_data_with_missing_leafs = {
+				'position_in_workflow' => 0,
+				'is_always_run' => false,
+				'id' => 'step-id',
+				'steplib_source' => 'https://github.com/steplib/steplib',
+				'version_tag' => '1.0.0',
+				# 'name' => 'step name - can be changed by the user',
+				# 'description' => 'step description',
+				'website' => 'http://...',
+				'fork_url' => 'http://...',
+				# 'icon_url_256' => 'https://...',
+				'source' => {
+					'git' => 'http://...'
+				},
+				'host_os_tags' => ['osx-10.9'],
+				# 'project_type_tags' => ['ios'],
+				# 'type_tags' => ['test'],
+				'is_requires_admin_user' => true,
+				'inputs' => [{
+					# 'title' => 'input title',
+					# 'description' => 'input description',
+					'mapped_to' => 'TEST_ENV',
+					# 'is_expand' => false,
+					# 'is_required' => false,
+					# 'value_options' => ['val1', 'val2'],
+					'value' => 'input value',
+					# 'is_dont_change_value' => false
+					}],
+				'outputs' => [{
+					'title' => 'output title',
+					'description' => 'output description',
+					'mapped_to' => 'OUT_ENV'
+					}]
+				}
 		end
 
-		it "should fill out the missing properties with valid default values, so that the workflow is valid" do
-			# of course this can only fill-out properties which have a pre-defined valid default value
-			#  the missing properties are commented out
-			wf_data_to_fill_out = {
+		it "should return the same data for a complete, valid workflow-step data" do
+			workflow_step_data_copy = Steplib::HashUtils.deep_copy(@steplib_step_version_with_two_inputs)
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow_step(workflow_step_data_copy)
+			expect(res_data).to eq(@steplib_step_version_with_two_inputs)
+			expect(@steplib_step_version_with_two_inputs).to eq(workflow_step_data_copy)
+		end
+
+		it "should fill out the base format - this is the absolute minimum to make a valid workflow-step" do
+			wf_step_data_to_fill_out = Steplib::HashUtils.deep_copy(@workflow_step_data_with_missing_leafs)
+			wf_step_data_to_fill_out['inputs'] = nil
+			wf_step_data_to_fill_out['outputs'] = nil
+
+			# it's not valid in itself / in it's current form
+			expect{
+				Steplib::WorkflowValidator.validate_workflow_step!(wf_step_data_to_fill_out)
+				}.to raise_error
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow_step(wf_step_data_to_fill_out)
+
+			# but this should be valid after the default value setup
+			expect{
+				Steplib::WorkflowValidator.validate_workflow_step!(res_data)
+				}.to_not raise_error
+		end
+
+		it "should fill out the missing properties with valid default values, so that the workflow-step is valid" do
+			# it's not valid in itself / in it's current form
+			expect{
+				Steplib::WorkflowValidator.validate_workflow_step!(@workflow_step_data_with_missing_leafs)
+				}.to raise_error
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow_step(@workflow_step_data_with_missing_leafs)
+
+			# but this should be valid after the default value setup
+			expect{
+				Steplib::WorkflowValidator.validate_workflow_step!(res_data)
+				}.to_not raise_error
+		end
+	end
+
+	describe '#set_defaults_for_missing_properties_in_workflow' do
+		before(:each) do
+			# only the most inner, 'leaf' properties missing,
+			#  the main structure of this Workflow data is valid
+			@workflow_step_data_with_missing_leafs = {
+				'position_in_workflow' => 0,
+				'is_always_run' => false,
+				'id' => 'step-id',
+				'steplib_source' => 'https://github.com/steplib/steplib',
+				'version_tag' => '1.0.0',
+				# 'name' => 'step name - can be changed by the user',
+				# 'description' => 'step description',
+				'website' => 'http://...',
+				'fork_url' => 'http://...',
+				# 'icon_url_256' => 'https://...',
+				'source' => {
+					'git' => 'http://...'
+				},
+				'host_os_tags' => ['osx-10.9'],
+				# 'project_type_tags' => ['ios'],
+				# 'type_tags' => ['test'],
+				'is_requires_admin_user' => true,
+				'inputs' => [{
+					# 'title' => 'input title',
+					# 'description' => 'input description',
+					'mapped_to' => 'TEST_ENV',
+					# 'is_expand' => false,
+					# 'is_required' => false,
+					# 'value_options' => ['val1', 'val2'],
+					'value' => 'input value',
+					# 'is_dont_change_value' => false
+					}],
+				'outputs' => [{
+					'title' => 'output title',
+					'description' => 'output description',
+					'mapped_to' => 'OUT_ENV'
+					}]
+				}
+			# and a workflow, with similar, missing 'leaf' properties
+			@workflow_data_with_missing_leafs = {
 				'format_version' => '0.9.0',
 				'environments' => [{
 					# 'title' => 'env title',
@@ -126,48 +234,43 @@ describe Steplib::WorkflowUpdater do
 					# 'is_expand' => false,
 					'value' => 'Value of the env var'
 					}],
-				'steps' => [{
-					'position_in_workflow' => 0,
-					'is_always_run' => false,
-					'id' => 'step-id',
-					'steplib_source' => 'https://github.com/steplib/steplib',
-					'version_tag' => '1.0.0',
-					# 'name' => 'step name - can be changed by the user',
-					# 'description' => 'step description',
-					'website' => 'http://...',
-					'fork_url' => 'http://...',
-					# 'icon_url_256' => 'https://...',
-					'source' => {
-						'git' => 'http://...'
-					},
-					'host_os_tags' => ['osx-10.9'],
-					# 'project_type_tags' => ['ios'],
-					# 'type_tags' => ['test'],
-					'is_requires_admin_user' => true,
-					'inputs' => [{
-						# 'title' => 'input title',
-						# 'description' => 'input description',
-						'mapped_to' => 'TEST_ENV',
-						# 'is_expand' => false,
-						# 'is_required' => false,
-						# 'value_options' => ['val1', 'val2'],
-						'value' => 'input value',
-						# 'is_dont_change_value' => false
-						}],
-					'outputs' => [{
-						'title' => 'output title',
-						'description' => 'output description',
-						'mapped_to' => 'OUT_ENV'
-						}]
-					}]
+				'steps' => [Steplib::HashUtils.deep_copy(@workflow_step_data_with_missing_leafs)]
 				}
+		end
+
+		it "should return the same data for a complete, valid workflow data" do
+			workflow_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow(workflow_data_copy)
+			expect(res_data).to eq(@valid_workflow_data)
+			expect(@valid_workflow_data).to eq(workflow_data_copy)
+		end
+
+		it "should fill out the base format - this is the absolute minimum to make a valid workflow" do
+			wf_data_to_fill_out = {
+				'format_version' => '0.9.0'
+			}
 
 			# it's not valid in itself / in it's current form
 			expect{
 				Steplib::WorkflowValidator.validate_workflow!(wf_data_to_fill_out)
 				}.to raise_error
 
-			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties(wf_data_to_fill_out)
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow(wf_data_to_fill_out)
+
+			# but this should be valid after the default value setup
+			expect{
+				Steplib::WorkflowValidator.validate_workflow!(res_data)
+				}.to_not raise_error
+		end
+
+		it "should fill out the missing properties with valid default values, so that the workflow is valid" do
+			# it's not valid in itself / in it's current form
+			expect{
+				Steplib::WorkflowValidator.validate_workflow!(@workflow_data_with_missing_leafs)
+				}.to raise_error
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties_in_workflow(@workflow_data_with_missing_leafs)
 
 			# but this should be valid after the default value setup
 			expect{
