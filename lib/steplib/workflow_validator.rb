@@ -58,52 +58,57 @@ module Steplib
 					['outputs', Array],
 					])
 
-					HashUtils.check_required_attributes_and_types!(workflow_step_data['source'], [
-						['git', String]
-						])
+				# optional - can be nil
+				workflow_step_data = HashUtils.set_missing_defaults(
+					workflow_step_data,
+					[{key: 'icon_url_256', value: nil}])
 
-					a_host_os_tags = workflow_step_data['host_os_tags']
-					a_host_os_tags.each { |a_tag|
-						raise "Invalid host-os-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
+				HashUtils.check_required_attributes_and_types!(workflow_step_data['source'], [
+					['git', String]
+					])
+
+				a_host_os_tags = workflow_step_data['host_os_tags']
+				a_host_os_tags.each { |a_tag|
+					raise "Invalid host-os-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
+				}
+
+				a_project_type_tags = workflow_step_data['project_type_tags']
+				a_project_type_tags.each { |a_tag|
+					raise "Invalid project-type-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
+				}
+
+				a_type_tags = workflow_step_data['type_tags']
+				a_type_tags.each { |a_tag|
+					raise "Invalid type-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
+				}
+
+				a_inputs = workflow_step_data['inputs']
+				a_inputs.each do |a_input_itm|
+					HashUtils.check_required_attributes_and_types!(a_input_itm, [
+					['title', String],
+					['description', String],
+					['mapped_to', String],
+					['is_expand', ABooleanValue],
+					['is_required', ABooleanValue],
+					['value_options', Array],
+					['value', String],
+					['is_dont_change_value', ABooleanValue]
+					])
+
+					a_value_options = a_input_itm['value_options']
+					a_value_options.each { |a_value_option|
+						raise "Invalid value-option (#{a_value_option}), not a String (class: #{a_value_option.class})!" unless a_value_option.is_a? String
 					}
+				end
 
-					a_project_type_tags = workflow_step_data['project_type_tags']
-					a_project_type_tags.each { |a_tag|
-						raise "Invalid project-type-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
-					}
-
-					a_type_tags = workflow_step_data['type_tags']
-					a_type_tags.each { |a_tag|
-						raise "Invalid type-tag (#{a_tag}), not a String (class: #{a_tag.class})!" unless a_tag.is_a? String
-					}
-
-					a_inputs = workflow_step_data['inputs']
-					a_inputs.each do |a_input_itm|
-						HashUtils.check_required_attributes_and_types!(a_input_itm, [
-						['title', String],
-						['description', String],
-						['mapped_to', String],
-						['is_expand', ABooleanValue],
-						['is_required', ABooleanValue],
-						['value_options', Array],
-						['value', String],
-						['is_dont_change_value', ABooleanValue]
-						])
-
-						a_value_options = a_input_itm['value_options']
-						a_value_options.each { |a_value_option|
-							raise "Invalid value-option (#{a_value_option}), not a String (class: #{a_value_option.class})!" unless a_value_option.is_a? String
-						}
-					end
-
-					a_outputs = workflow_step_data['outputs']
-					a_outputs.each do |a_output_itm|
-						HashUtils.check_required_attributes_and_types!(a_output_itm, [
-						['title', String],
-						['description', String],
-						['mapped_to', String]
-						])
-					end
+				a_outputs = workflow_step_data['outputs']
+				a_outputs.each do |a_output_itm|
+					HashUtils.check_required_attributes_and_types!(a_output_itm, [
+					['title', String],
+					['description', String],
+					['mapped_to', String]
+					])
+				end
 			end
 
 		end

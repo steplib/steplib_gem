@@ -33,7 +33,8 @@ module Steplib
 					[
 						'id', 'steplib_source', 'description',
 						'website', 'fork_url', 'source', 'host_os_tags',
-						'project_type_tags', 'type_tags', 'is_requires_admin_user'
+						'project_type_tags', 'type_tags', 'is_requires_admin_user',
+						'icon_url_256'
 					]
 					)
 

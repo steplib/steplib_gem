@@ -28,6 +28,7 @@ describe Steplib::WorkflowValidator do
 					'description' => 'step description',
 					'website' => 'http://...',
 					'fork_url' => 'http://...',
+					'icon_url_256' => 'https://...',
 					'source' => {
 						'git' => 'http://...'
 					},
