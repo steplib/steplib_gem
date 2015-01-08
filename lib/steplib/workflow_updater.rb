@@ -6,6 +6,44 @@ module Steplib
 		class << self
 
 			#
+			# of course this can only fill-out properties
+			#  which have a pre-defined valid default value
+			def set_defaults_for_missing_properties(workflow_data)
+				workflow_data['environments'] = workflow_data['environments'].map { |an_env|
+					an_env = HashUtils.set_missing_defaults(an_env, [
+						{key: 'title', value: ''},
+						{key: 'is_expand', value: true}
+						])
+					# return:
+					an_env
+				}
+				workflow_data['steps'] = workflow_data['steps'].map { |a_step|
+					a_step = HashUtils.set_missing_defaults(a_step, [
+						{key: 'name', value: ''},
+						{key: 'description', value: ''},
+						{key: 'icon_url_256', value: nil},
+						{key: 'project_type_tags', value: []},
+						{key: 'type_tags', value: []},
+						])
+					a_step['inputs'] = a_step['inputs'].map { |a_step_inp|
+						a_step_inp = HashUtils.set_missing_defaults(a_step_inp, [
+							{key: 'title', value: ''},
+							{key: 'description', value: ''},
+							{key: 'is_expand', value: true},
+							{key: 'is_required', value: false},
+							{key: 'value_options', value: []},
+							{key: 'is_dont_change_value', value: false},
+							])
+						# return:
+						a_step_inp
+					}
+					# return:
+					a_step
+				}
+				return workflow_data
+			end
+
+			#
 			# The input steplib_step_version have to be a valid step-version!
 			# The input workflow_step is not copied, modified in-inline!
 			# Also: inputs which can't be found in the steplib-step-version

@@ -47,6 +47,133 @@ describe Steplib::WorkflowUpdater do
 				'mapped_to' => 'OUT_ENV'
 				}]
 			}
+		@valid_workflow_data = {
+				'format_version' => '0.9.0',
+				'environments' => [{
+					'title' => 'env title',
+					'mapped_to' => 'ENV_VAR',
+					'is_expand' => false,
+					'value' => 'Value of the env var'
+					}],
+				'steps' => [{
+					#
+					# workflow format specific
+					'position_in_workflow' => 0,
+					'is_always_run' => false,
+					#
+					# steplib format specific
+					## auto generated
+					'id' => 'step-id',
+					'steplib_source' => 'https://github.com/steplib/steplib',
+					'version_tag' => '1.0.0',
+					## data from step.yml
+					'name' => 'step name - can be changed by the user',
+					'description' => 'step description',
+					'website' => 'http://...',
+					'fork_url' => 'http://...',
+					'icon_url_256' => 'https://...',
+					'source' => {
+						'git' => 'http://...'
+					},
+					'host_os_tags' => ['osx-10.9'],
+					'project_type_tags' => ['ios'],
+					'type_tags' => ['test'],
+					'is_requires_admin_user' => true,
+					'inputs' => [{
+						'title' => 'input title',
+						'description' => 'input description',
+						'mapped_to' => 'TEST_ENV',
+						'is_expand' => false,
+						'is_required' => false,
+						'value_options' => ['val1', 'val2'],
+						'value' => 'input value',
+						'is_dont_change_value' => false
+						}],
+					'outputs' => [{
+						'title' => 'output title',
+						'description' => 'output description',
+						'mapped_to' => 'OUT_ENV'
+						}]
+					}]
+				}
+	end
+
+	describe 'example data validity check' do
+		it "@valid_workflow_data should be valid" do
+			expect{
+				Steplib::WorkflowValidator.validate_workflow!(@valid_workflow_data)
+				}.to_not raise_error
+		end
+	end
+
+	describe '#set_defaults_for_missing_properties' do
+		it "should return the same data for a complete, valid workflow data" do
+			workflow_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties(@valid_workflow_data)
+			expect(res_data).to eq(workflow_data_copy)
+			expect(@valid_workflow_data).to eq(workflow_data_copy)
+		end
+
+		it "should fill out the missing properties with valid default values, so that the workflow is valid" do
+			# of course this can only fill-out properties which have a pre-defined valid default value
+			#  the missing properties are commented out
+			wf_data_to_fill_out = {
+				'format_version' => '0.9.0',
+				'environments' => [{
+					# 'title' => 'env title',
+					'mapped_to' => 'ENV_VAR',
+					# 'is_expand' => false,
+					'value' => 'Value of the env var'
+					}],
+				'steps' => [{
+					'position_in_workflow' => 0,
+					'is_always_run' => false,
+					'id' => 'step-id',
+					'steplib_source' => 'https://github.com/steplib/steplib',
+					'version_tag' => '1.0.0',
+					# 'name' => 'step name - can be changed by the user',
+					# 'description' => 'step description',
+					'website' => 'http://...',
+					'fork_url' => 'http://...',
+					# 'icon_url_256' => 'https://...',
+					'source' => {
+						'git' => 'http://...'
+					},
+					'host_os_tags' => ['osx-10.9'],
+					# 'project_type_tags' => ['ios'],
+					# 'type_tags' => ['test'],
+					'is_requires_admin_user' => true,
+					'inputs' => [{
+						# 'title' => 'input title',
+						# 'description' => 'input description',
+						'mapped_to' => 'TEST_ENV',
+						# 'is_expand' => false,
+						# 'is_required' => false,
+						# 'value_options' => ['val1', 'val2'],
+						'value' => 'input value',
+						# 'is_dont_change_value' => false
+						}],
+					'outputs' => [{
+						'title' => 'output title',
+						'description' => 'output description',
+						'mapped_to' => 'OUT_ENV'
+						}]
+					}]
+				}
+
+			# it's not valid in itself / in it's current form
+			expect{
+				Steplib::WorkflowValidator.validate_workflow!(wf_data_to_fill_out)
+				}.to raise_error
+
+			res_data = Steplib::WorkflowUpdater.set_defaults_for_missing_properties(wf_data_to_fill_out)
+
+			# but this should be valid after the default value setup
+			expect{
+				Steplib::WorkflowValidator.validate_workflow!(res_data)
+				}.to_not raise_error
+		end
 	end
 
 	describe '#inject_missing_default_values_from_step_version' do
