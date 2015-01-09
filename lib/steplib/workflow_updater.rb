@@ -82,26 +82,31 @@ module Steplib
 					raise "Workflow-step 'version_tag' doesn't match the steplib-step-version's"
 				end
 				#
-				# copy all except:
-				# * name
+				# copy all except the ones which are used for identifying the input inside a step(-version):
+				# * steplib_source
+				# * id
 				# * version_tag
+				#
+				# copy no-matter-what:
 				workflow_step = HashUtils.copy_attributes(
 					workflow_step,
 					steplib_step_version,
-					[
-						'id', 'steplib_source', 'description',
-						'website', 'fork_url', 'source', 'host_os_tags',
+					['description', 'website', 'fork_url', 'source', 'host_os_tags',
 						'project_type_tags', 'type_tags', 'is_requires_admin_user',
-						'icon_url_256'
-					]
+						'icon_url_256']
+					)
+				#
+				# copy only if missing
+				#  see "@WorkflowUserMod" in the steplib format spec for more information
+				workflow_step = HashUtils.copy_missing_attributes(
+					workflow_step,
+					steplib_step_version,
+					['name']
 					)
 
 				# update inputs and remove the ones which can't be
 				#  found in the steplib step version's inputs
 				#  and add the missing ones
-				# update except:
-				#  * mapped_to
-				#  * value
 				steplib_step_version_inputs = steplib_step_version['inputs']
 				workflow_step['inputs'] = workflow_step['inputs'].map { |a_wf_step_inp|
 					# search for the same input in the steplib-step-version
@@ -117,11 +122,21 @@ module Steplib
 						# return:
 						nil
 					else
+						# copy all except the ones which are used for identifying the input inside a step(-version):
+						#  * mapped_to
+						# copy no matter what
 						a_wf_step_inp = HashUtils.copy_attributes(
 							a_wf_step_inp,
 							related_steplib_input,
-							['title', 'description', 'is_expand',
+							['title', 'description',
 								'is_required', 'value_options', 'is_dont_change_value']
+							)
+						# copy only if missing
+						#  see "@WorkflowUserMod" in the steplib format spec for more information
+						a_wf_step_inp = HashUtils.copy_missing_attributes(
+							a_wf_step_inp,
+							related_steplib_input,
+							['value', 'is_expand']
 							)
 						# return:
 						a_wf_step_inp

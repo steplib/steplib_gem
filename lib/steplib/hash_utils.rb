@@ -58,7 +58,7 @@ module Steplib
 			#  from copy_to hash.
 			# Doesn't do a copy of input hash, will inline-set
 			#  the attributes / modify the input hash!
-			def copy_missing_defaults(hsh_copy_to, hsh_copy_from, attr_to_copy_list)
+			def copy_missing_attributes(hsh_copy_to, hsh_copy_from, attr_to_copy_list)
 				attr_to_copy_list.each do |a_attr_to_copy|
 					if hsh_copy_to[a_attr_to_copy].nil?
 						hsh_copy_to[a_attr_to_copy] = hsh_copy_from[a_attr_to_copy]
@@ -68,9 +68,9 @@ module Steplib
 			end
 			# Deep-copy version
 			# Returns a new hash, the original input hash will be kept unchanged!
-			def copy_missing_defaults_dcopy(in_hsh_copy_to, hsh_copy_from, attr_to_copy_list)
+			def copy_missing_attributes_dcopy(in_hsh_copy_to, hsh_copy_from, attr_to_copy_list)
 				hsh_copy_to = deep_copy(in_hsh_copy_to)
-				return copy_missing_defaults(hsh_copy_to, hsh_copy_from, attr_to_copy_list)
+				return copy_missing_attributes(hsh_copy_to, hsh_copy_from, attr_to_copy_list)
 			end
 
 			#

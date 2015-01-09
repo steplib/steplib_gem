@@ -78,7 +78,7 @@ describe Steplib::HashUtils do
 		end
 	end
 
-	describe '#copy_missing_defaults_dcopy' do
+	describe '#copy_missing_attributes_dcopy' do
 		it "should return with a new hash, filled with the values copied from copy_from hash for missing attributes" do
 			hsh_copy_to = {
 				a: 1,
@@ -92,7 +92,7 @@ describe Steplib::HashUtils do
 			}
 			copy_these = [:a, :c]
 
-			filled_hsh = Steplib::HashUtils.copy_missing_defaults_dcopy(
+			filled_hsh = Steplib::HashUtils.copy_missing_attributes_dcopy(
 				hsh_copy_to,
 				hsh_copy_from,
 				copy_these)
@@ -138,7 +138,7 @@ describe Steplib::HashUtils do
 			expect(hsh_copy_to[:c]).to eq(nil)
 			expect(hsh_copy_to[:d]).to eq(nil)
 
-			# filled hash's :a should be changed / copied, unlike in the 'copy_missing_defaults_dcopy' spec
+			# filled hash's :a should be changed / copied, unlike in the 'copy_missing_attributes_dcopy' spec
 			expect(filled_hsh[:a]).to eq('a')
 			expect(filled_hsh[:b]).to eq(2)
 			# and should contain the previously missing :c
