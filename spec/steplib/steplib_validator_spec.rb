@@ -3,7 +3,7 @@ require 'steplib/steplib_validator'
 describe Steplib::SteplibValidator do
 	context 'with a valid steplib data' do
 		before(:each) do
-			latest_test_step_ver = {
+			@latest_test_step_ver = {
 				# auto generated
 				'id' => 'step-id',
 				'steplib_source' => 'https://github.com/steplib/steplib',
@@ -45,8 +45,8 @@ describe Steplib::SteplibValidator do
 				'steps' => { 
 					'step-id' => {
 						'id' => 'step-id',
-						'latest' => latest_test_step_ver,
-						'versions' => [latest_test_step_ver]
+						'latest' => @latest_test_step_ver,
+						'versions' => [@latest_test_step_ver]
 						}
 					}
 				}
@@ -57,6 +57,22 @@ describe Steplib::SteplibValidator do
 				expect{
 					Steplib::SteplibValidator.validate_steplib!(@valid_steplib_data)
 					}.to_not raise_error
+			end
+		end
+
+		describe '#whitelist_step_version' do
+			it 'should return a valid Step-Version after a whitelist (should not remove any required property)' do
+				latest_test_step_ver_copy = Steplib::HashUtils.deep_copy(@latest_test_step_ver)
+				expect{
+					Steplib::SteplibValidator.validate_step_version!(latest_test_step_ver_copy)
+					}.to_not raise_error
+				# whitelist
+				whitelisted_step_ver = Steplib::SteplibValidator.whitelist_step_version(latest_test_step_ver_copy)
+				# should be still valid
+				expect{
+					Steplib::SteplibValidator.validate_step_version!(whitelisted_step_ver)
+					}.to_not raise_error
+				expect(latest_test_step_ver_copy).to eq(@latest_test_step_ver)
 			end
 		end
 	end

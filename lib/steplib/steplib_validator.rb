@@ -41,8 +41,33 @@ module Steplib
 				validate_step_version!(step_data['latest'])
 			end
 
-			def validate_step_version!(step_version_data)
-				HashUtils.check_required_attributes_and_types!(step_version_data, [
+			def whitelist_step_version(step_version_data)
+				raise "Input step_version_data hash is nil" if step_version_data.nil?
+
+				base_prop_whitelist = required_step_version_properties_with_types().map { |e| e.first }
+				base_prop_whitelist = base_prop_whitelist.concat( optional_step_version_properties() )
+				step_version_data = HashUtils.whitelist(step_version_data, base_prop_whitelist)
+				# source
+				step_version_data['source'] = HashUtils.whitelist(
+					step_version_data['source'],
+					required_step_version_source_properties_with_types().map { |e| e.first })
+				# inputs
+				step_version_data['inputs'] = step_version_data['inputs'].map do |a_step_input|
+					HashUtils.whitelist(
+						a_step_input,
+						required_step_version_inputs_properties_with_types().map { |e| e.first })
+				end
+				# outputs
+				step_version_data['outputs'] = step_version_data['outputs'].map do |a_step_output|
+					HashUtils.whitelist(
+						a_step_output,
+						required_step_version_outputs_properties_with_types().map { |e| e.first })
+				end
+				return step_version_data
+			end
+
+			def required_step_version_properties_with_types
+				return [
 					# auto generated
 					['id', String],
 					['steplib_source', String],
@@ -59,16 +84,56 @@ module Steplib
 					['is_requires_admin_user', ABooleanValue],
 					['inputs', Array],
 					['outputs', Array],
-					])
+					]
+			end
+
+			def optional_step_version_properties
+				return ['icon_url_256']
+			end
+
+			def required_step_version_source_properties_with_types
+				return [ ['git', String] ]
+			end
+
+			def required_step_version_inputs_properties_with_types
+				return [
+					['title', String],
+					['description', String],
+					['mapped_to', String],
+					['is_expand', ABooleanValue],
+					['is_required', ABooleanValue],
+					['value_options', Array],
+					['value', String],
+					['is_dont_change_value', ABooleanValue]
+					]
+			end
+
+			def required_step_version_outputs_properties_with_types
+				return [
+					['title', String],
+					['description', String],
+					['mapped_to', String]
+					]
+			end
+
+			def validate_step_version!(step_version_data)
+				# whitelist
+				step_version_data = whitelist_step_version(step_version_data)
+				# check/validate
+				HashUtils.check_required_attributes_and_types!(
+					step_version_data,
+					required_step_version_properties_with_types()
+					)
 
 				# optional - can be nil
 				step_version_data = HashUtils.set_missing_defaults(
 					step_version_data,
 					[{key: 'icon_url_256', value: nil}])
 
-				HashUtils.check_required_attributes_and_types!(step_version_data['source'], [
-					['git', String]
-					])
+				HashUtils.check_required_attributes_and_types!(
+					step_version_data['source'],
+					required_step_version_source_properties_with_types()
+					)
 
 				a_host_os_tags = step_version_data['host_os_tags']
 				a_host_os_tags.each { |a_tag|
@@ -87,16 +152,10 @@ module Steplib
 
 				a_inputs = step_version_data['inputs']
 				a_inputs.each do |a_input_itm|
-					HashUtils.check_required_attributes_and_types!(a_input_itm, [
-					['title', String],
-					['description', String],
-					['mapped_to', String],
-					['is_expand', ABooleanValue],
-					['is_required', ABooleanValue],
-					['value_options', Array],
-					['value', String],
-					['is_dont_change_value', ABooleanValue]
-					])
+					HashUtils.check_required_attributes_and_types!(
+						a_input_itm,
+						required_step_version_inputs_properties_with_types()
+						)
 
 					a_value_options = a_input_itm['value_options']
 					a_value_options.each { |a_value_option|
@@ -106,11 +165,10 @@ module Steplib
 
 				a_outputs = step_version_data['outputs']
 				a_outputs.each do |a_output_itm|
-					HashUtils.check_required_attributes_and_types!(a_output_itm, [
-					['title', String],
-					['description', String],
-					['mapped_to', String]
-					])
+					HashUtils.check_required_attributes_and_types!(
+						a_output_itm,
+						required_step_version_outputs_properties_with_types()
+						)
 				end
 			end
 

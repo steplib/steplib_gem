@@ -13,6 +13,15 @@ module Steplib
 				return Marshal.load(Marshal.dump(hsh))
 			end
 
+			def whitelist(hsh, whitelist)
+				return nil if hsh.nil?
+				res_hash = {}
+				whitelist.each do |whiteitm|
+					res_hash[whiteitm] = hsh[whiteitm]
+				end
+				return res_hash
+			end
+
 			def check_required_attributes_and_types!(hash_to_check, attribute_type_array)
 				attribute_type_array.each do |a_attribute_type_itm|
 					attribute_key = a_attribute_type_itm[0]

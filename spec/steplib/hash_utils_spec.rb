@@ -2,6 +2,23 @@ require 'steplib/hash_utils'
 
 describe Steplib::HashUtils do
 
+	describe '#whitelist' do
+		it "should return a new hash containing only the items listed" do
+			orig_hsh = {
+				'a' => 1,
+				'b' => 2,
+				'c' => 'c'
+			}
+			res_hsh = Steplib::HashUtils.whitelist(orig_hsh, ['a', 'c'])
+			expect(res_hsh['a']).to eq(1)
+			expect(res_hsh['b']).to eq(nil)
+			expect(res_hsh['c']).to eq('c')
+			# orig hash's 'b' should be still 2, it should not modify the original hash
+			#  BUT it's also not a deep-copy!
+			expect(orig_hsh['b']).to eq(2)
+		end
+	end
+
 	describe '#check_required_attributes_and_types!' do
 		it "should not raise an error & should return true for a hash with all the required attributes and matching types" do
 			hsh = {
