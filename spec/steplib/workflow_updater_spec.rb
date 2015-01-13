@@ -140,7 +140,7 @@ describe Steplib::WorkflowUpdater do
 					}],
 				'outputs' => [{
 					'title' => 'output title',
-					'description' => 'output description',
+					# 'description' => 'output description',
 					'mapped_to' => 'OUT_ENV'
 					}]
 				}

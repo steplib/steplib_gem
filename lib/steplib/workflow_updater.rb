@@ -60,6 +60,13 @@ module Steplib
 					# return:
 					a_step_inp
 				}
+				workflow_step_data['outputs'] = workflow_step_data['outputs'].map { |a_step_output|
+					a_step_output = HashUtils.set_missing_defaults(a_step_output, [
+						{key: 'description', value: ''}
+						])
+					# return:
+					a_step_output
+				}
 				return workflow_step_data
 			end
 
