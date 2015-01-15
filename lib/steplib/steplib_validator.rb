@@ -68,7 +68,7 @@ module Steplib
 
 			def required_step_version_properties_with_types
 				return [
-					# auto generated
+					# auto-generated IDs
 					['id', String],
 					['steplib_source', String],
 					['version_tag', String],
