@@ -103,7 +103,7 @@ module Steplib
 						'icon_url_256']
 					)
 				#
-				# copy only if missing
+				# copy only if missing (user defined attributes)
 				#  see "@WorkflowUserMod" in the steplib format spec for more information
 				workflow_step = HashUtils.copy_missing_attributes(
 					workflow_step,
@@ -131,6 +131,7 @@ module Steplib
 					else
 						# copy all except the ones which are used for identifying the input inside a step(-version):
 						#  * mapped_to
+						#
 						# copy no matter what
 						a_wf_step_inp = HashUtils.copy_attributes(
 							a_wf_step_inp,
@@ -138,7 +139,7 @@ module Steplib
 							['title', 'description',
 								'is_required', 'value_options', 'is_dont_change_value']
 							)
-						# copy only if missing
+						# copy only if missing (user defined attributes)
 						#  see "@WorkflowUserMod" in the steplib format spec for more information
 						a_wf_step_inp = HashUtils.copy_missing_attributes(
 							a_wf_step_inp,
