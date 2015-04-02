@@ -23,6 +23,7 @@ describe Steplib::WorkflowUtils do
 			'project_type_tags' => ['ios'],
 			'type_tags' => ['test'],
 			'is_requires_admin_user' => true,
+			'is_always_run' => true,
 			'inputs' => [{
 				'title' => 'input title',
 				'description' => 'input description',
@@ -53,7 +54,7 @@ describe Steplib::WorkflowUtils do
 				'value' => 'env value',
 				'is_expand' => true
 			}
-			
+
 			wf_env_itm = Steplib::WorkflowUtils.create_workflow_environment_item(
 				'title of env',
 				'MAPPED_TO_ENV',
@@ -74,7 +75,7 @@ describe Steplib::WorkflowUtils do
 				'environments' => [],
 				'steps' => []
 			}
-			
+
 			wf_template = Steplib::WorkflowUtils.create_workflow_base_template()
 			expect(wf_template).to eq(expected_hsh)
 			# should be valid
@@ -88,8 +89,7 @@ describe Steplib::WorkflowUtils do
 		it "should return a valid Workflow step based on the input step" do
 			wf_step = Steplib::WorkflowUtils.create_workflow_step_from_steplib_step(
 				@valid_steplib_step_version_1,
-				0,
-				true)
+				0)
 			# should be valid
 			expect{
 				Steplib::WorkflowValidator.validate_workflow_step!(wf_step)

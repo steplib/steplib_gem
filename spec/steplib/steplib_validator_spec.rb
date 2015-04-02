@@ -21,6 +21,7 @@ describe Steplib::SteplibValidator do
 				'project_type_tags' => ['ios'],
 				'type_tags' => ['test'],
 				'is_requires_admin_user' => true,
+				'is_always_run' => false,
 				'inputs' => [{
 					'title' => 'input title',
 					'description' => 'input description',
@@ -42,7 +43,7 @@ describe Steplib::SteplibValidator do
 				'format_version' => '0.9.0',
 				'generated_at_timestamp' => 1420540014,
 				'steplib_source' => 'https://github.com/steplib/steplib',
-				'steps' => { 
+				'steps' => {
 					'step-id' => {
 						'id' => 'step-id',
 						'latest' => @latest_test_step_ver,

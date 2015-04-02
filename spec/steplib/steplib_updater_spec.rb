@@ -23,6 +23,7 @@ describe Steplib::SteplibUpdater do
 			'project_type_tags' => ['ios'],
 			'type_tags' => ['test'],
 			'is_requires_admin_user' => true,
+			'is_always_run' => false,
 			'inputs' => [{
 				'title' => 'input title',
 				'description' => 'input description',

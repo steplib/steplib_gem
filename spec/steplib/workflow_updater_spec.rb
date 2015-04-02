@@ -22,6 +22,7 @@ describe Steplib::WorkflowUpdater do
 			'project_type_tags' => ['ios'],
 			'type_tags' => ['test'],
 			'is_requires_admin_user' => true,
+			'is_always_run' => false,
 			'inputs' => [{
 				'title' => 'input title',
 				'description' => 'input description',
@@ -289,7 +290,7 @@ describe Steplib::WorkflowUpdater do
 				'position_in_workflow' => 0,
 				'is_always_run' => false,
 				})
-			
+
 
 			res_data = Steplib::WorkflowUpdater.update_workflow_step_with_steplib_step_version!(
 				workflow_step,
@@ -305,7 +306,7 @@ describe Steplib::WorkflowUpdater do
 				'position_in_workflow' => 0,
 				'is_always_run' => false,
 				})
-			
+
 			steplib_step_version['id'] = nil
 
 			expect{
@@ -361,7 +362,7 @@ describe Steplib::WorkflowUpdater do
 			workflow_step = Steplib::HashUtils.deep_copy(steplib_step_version).merge(workflow_specific_data)
 			# keep only the first input in the workflow
 			workflow_step['inputs'] = [workflow_step['inputs'].first]
-			
+
 			res_data = Steplib::WorkflowUpdater.update_workflow_step_with_steplib_step_version!(
 				workflow_step,
 				steplib_step_version)
@@ -393,7 +394,7 @@ describe Steplib::WorkflowUpdater do
 				'value' => 'input value 3',
 				'is_dont_change_value' => false
 				})
-			
+
 			res_data = Steplib::WorkflowUpdater.update_workflow_step_with_steplib_step_version!(
 				workflow_step,
 				steplib_step_version)
@@ -420,7 +421,7 @@ describe Steplib::WorkflowUpdater do
 				'description' => 'output description',
 				'mapped_to' => 'OUT_ENV'
 				})
-			
+
 			res_data = Steplib::WorkflowUpdater.update_workflow_step_with_steplib_step_version!(
 				workflow_step,
 				steplib_step_version)
@@ -434,7 +435,7 @@ describe Steplib::WorkflowUpdater do
 			# remove the outputs from the workflow
 			workflow_step = Steplib::HashUtils.deep_copy(steplib_step_version).merge(workflow_specific_data)
 			workflow_step['outputs'] = []
-			
+
 			res_data = Steplib::WorkflowUpdater.update_workflow_step_with_steplib_step_version!(
 				workflow_step,
 				steplib_step_version)

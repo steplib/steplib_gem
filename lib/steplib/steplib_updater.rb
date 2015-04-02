@@ -11,6 +11,7 @@ module Steplib
 				step_version_data = HashUtils.set_missing_defaults(step_version_data, [
 					{key: 'fork_url', value: step_version_data['website']},
 					{key: 'icon_url_256', value: nil},
+					{key: 'is_always_run', value: false},
 					{key: 'project_type_tags', value: []},
 					{key: 'type_tags', value: []},
 					{key: 'inputs', value: []},

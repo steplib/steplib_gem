@@ -82,6 +82,7 @@ module Steplib
 					['project_type_tags', Array],
 					['type_tags', Array],
 					['is_requires_admin_user', ABooleanValue],
+					['is_always_run', ABooleanValue],
 					['inputs', Array],
 					['outputs', Array],
 					]

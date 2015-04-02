@@ -22,10 +22,9 @@ module Steplib
 				return workflow_base_template
 			end
 
-			def create_workflow_step_from_steplib_step(steplib_step, position_in_workflow, is_always_run=false)
+			def create_workflow_step_from_steplib_step(steplib_step, position_in_workflow)
 				wf_step = HashUtils.deep_copy(steplib_step).merge({
 					'position_in_workflow' => position_in_workflow.to_i,
-					'is_always_run' => !!is_always_run,
 					})
 				return wf_step
 			end
@@ -34,7 +33,7 @@ module Steplib
 				workflow_data = create_workflow_base_template()
 				workflow_data['steps'] = steplib_step_versions.map.with_index { |steplib_step_ver, idx|
 					# return:
-					create_workflow_step_from_steplib_step(steplib_step_ver, idx, false)
+					create_workflow_step_from_steplib_step(steplib_step_ver, idx)
 				}
 				workflow_data['environments'] = workflow_environments
 				return workflow_data
