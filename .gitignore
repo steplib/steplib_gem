@@ -1,1 +1,8 @@
+# General
 *.gem
+.DS_Store
+.rbenv-version
+
+# Bundler files
+/.bundle
+/vendor
