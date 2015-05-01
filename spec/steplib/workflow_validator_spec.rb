@@ -2,9 +2,8 @@ require 'steplib/workflow_validator'
 
 describe Steplib::WorkflowValidator do
 	context 'with a valid data' do
-		before(:each) do
-			#
-			@valid_workflow_data = {
+		def create_valid_wf_data
+			return {
 				'format_version' => '0.9.0',
 				'environments' => [{
 					'title' => 'env title',
@@ -28,7 +27,6 @@ describe Steplib::WorkflowValidator do
 					'description' => 'step description',
 					'website' => 'http://...',
 					'fork_url' => 'http://...',
-					'icon_url_256' => 'https://...',
 					'source' => {
 						'git' => 'http://...'
 					},
@@ -50,9 +48,18 @@ describe Steplib::WorkflowValidator do
 						'title' => 'output title',
 						'description' => 'output description',
 						'mapped_to' => 'OUT_ENV'
-						}]
-					}]
+						}],
+					'icon_url_256' => 'https://...',
+					}],
+					'meta' => {
+						'data' => 'anything you like'
+						}
 				}
+		end
+
+		before(:each) do
+			#
+			@valid_workflow_data = create_valid_wf_data()
 		end
 
 		describe '#validate!' do
@@ -60,6 +67,77 @@ describe Steplib::WorkflowValidator do
 				expect{
 					Steplib::WorkflowValidator.validate_workflow!(@valid_workflow_data)
 					}.to_not raise_error
+			end
+		end
+
+		describe '#whitelist_workflow' do
+			it "should return the same data if there's no unsupported attribute" do
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).to eq(orig_data_copy)
+			end
+
+			it "should return the same a whitelisted workflow data - root attribute change" do
+				# top level attribute
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				@valid_workflow_data['not_supported_attribute'] = 'not supported'
+				whitelisted_data = Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).not_to eq(orig_data_copy)
+				expect(whitelisted_data).to eq(orig_data_copy)
+			end
+
+			it "should return the same a whitelisted workflow data - environment attribute change" do
+				# attribute in environments
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				@valid_workflow_data['environments'] = @valid_workflow_data['environments'].map do |itm|
+					itm['not_supported_attribute'] = 'not supported'
+					itm
+				end
+				whitelisted_data = Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).not_to eq(orig_data_copy)
+				expect(whitelisted_data).to eq(orig_data_copy)
+			end
+
+			it "should return the same a whitelisted workflow data - step-version attribute change" do
+				# attribute in steps
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				@valid_workflow_data['steps'] = @valid_workflow_data['steps'].map do |itm|
+					itm['not_supported_attribute'] = 'not supported'
+					itm
+				end
+				whitelisted_data = Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).not_to eq(orig_data_copy)
+				expect(whitelisted_data).to eq(orig_data_copy)
+			end
+
+			it "should return the same a whitelisted workflow data - step-version:input attribute change" do
+				# attribute in steps
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				@valid_workflow_data['steps'] = @valid_workflow_data['steps'].map do |a_step|
+					a_step['inputs'] = a_step['inputs'].map do |itm|
+						itm['not_supported_attribute'] = 'not supported'
+						itm
+					end
+					a_step
+				end
+				whitelisted_data = Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).not_to eq(orig_data_copy)
+				expect(whitelisted_data).to eq(orig_data_copy)
+			end
+
+			it "should return the same a whitelisted workflow data - step-version:output attribute change" do
+				# attribute in steps
+				orig_data_copy = Steplib::HashUtils.deep_copy(@valid_workflow_data)
+				@valid_workflow_data['steps'] = @valid_workflow_data['steps'].map do |a_step|
+					a_step['outputs'] = a_step['outputs'].map do |itm|
+						itm['not_supported_attribute'] = 'not supported'
+						itm
+					end
+					a_step
+				end
+				whitelisted_data = Steplib::WorkflowValidator.whitelist_workflow(@valid_workflow_data)
+				expect(@valid_workflow_data).not_to eq(orig_data_copy)
+				expect(whitelisted_data).to eq(orig_data_copy)
 			end
 		end
 	end
