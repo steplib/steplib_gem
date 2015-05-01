@@ -21,6 +21,6 @@ function print_and_do_command_exit_on_error {
 }
 
 # test
-print_and_do_command_exit_on_error rspec
+print_and_do_command_exit_on_error bundle exec rspec
 # build
 print_and_do_command_exit_on_error gem build steplib.gemspec
