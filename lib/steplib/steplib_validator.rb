@@ -88,8 +88,14 @@ module Steplib
 					]
 			end
 
+			def optional_step_version_properties_with_types
+				return [
+					['icon_url_256', String]
+					]
+			end
+
 			def optional_step_version_properties
-				return ['icon_url_256']
+				return optional_step_version_properties_with_types().map { |e| e.first }
 			end
 
 			def required_step_version_source_properties_with_types
