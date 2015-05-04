@@ -16,6 +16,7 @@ module Steplib
 					{key: 'type_tags', value: []},
 					{key: 'inputs', value: []},
 					{key: 'outputs', value: []},
+					{key: 'log_highlights', value: []},
 					])
 				#
 				# inputs

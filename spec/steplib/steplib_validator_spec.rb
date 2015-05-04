@@ -36,6 +36,10 @@ describe Steplib::SteplibValidator do
 					'title' => 'output title',
 					'description' => 'output description',
 					'mapped_to' => 'OUT_ENV'
+					}],
+				'log_highlights' => [{
+					'search_pattern' => '/a pattern/',
+					'highlight_type' => 'error'
 					}]
 				}
 			#

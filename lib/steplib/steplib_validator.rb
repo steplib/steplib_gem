@@ -63,6 +63,12 @@ module Steplib
 						a_step_output,
 						required_step_version_outputs_properties_with_types().map { |e| e.first })
 				end
+				# log_highlights
+				step_version_data['log_highlights'] = step_version_data['log_highlights'].map do |a_step_log_highlight|
+					HashUtils.whitelist(
+						a_step_log_highlight,
+						required_step_version_log_highlights_properties_with_types().map { |e| e.first })
+				end
 				return step_version_data
 			end
 
@@ -85,12 +91,13 @@ module Steplib
 					['is_always_run', ABooleanValue],
 					['inputs', Array],
 					['outputs', Array],
+					['log_highlights', Array],
 					]
 			end
 
 			def optional_step_version_properties_with_types
 				return [
-					['icon_url_256', String]
+					['icon_url_256', String],
 					]
 			end
 
@@ -123,6 +130,13 @@ module Steplib
 					]
 			end
 
+			def required_step_version_log_highlights_properties_with_types
+				return [
+					['search_pattern', String],
+					['highlight_type', String]
+					]
+			end
+
 			def validate_step_version!(step_version_data)
 				# whitelist
 				step_version_data = whitelist_step_version(step_version_data)
@@ -132,10 +146,14 @@ module Steplib
 					required_step_version_properties_with_types()
 					)
 
-				# optional - can be nil
+				# optional
 				step_version_data = HashUtils.set_missing_defaults(
 					step_version_data,
-					[{key: 'icon_url_256', value: nil}])
+					[
+						{key: 'icon_url_256', value: nil},
+						{key: 'log_highlights', value: []}
+						]
+					)
 
 				HashUtils.check_required_attributes_and_types!(
 					step_version_data['source'],
@@ -175,6 +193,14 @@ module Steplib
 					HashUtils.check_required_attributes_and_types!(
 						a_output_itm,
 						required_step_version_outputs_properties_with_types()
+						)
+				end
+
+				a_log_highlights = step_version_data['log_highlights']
+				a_log_highlights.each do |a_log_highlight_itm|
+					HashUtils.check_required_attributes_and_types!(
+						a_log_highlight_itm,
+						required_step_version_log_highlights_properties_with_types()
 						)
 				end
 			end

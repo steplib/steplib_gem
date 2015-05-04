@@ -47,6 +47,7 @@ module Steplib
 					# main arrays
 					{key: 'inputs', value: []},
 					{key: 'outputs', value: []},
+					{key: 'log_highlights', value: []},
 					])
 				workflow_step_data['inputs'] = workflow_step_data['inputs'].map { |a_step_inp|
 					a_step_inp = HashUtils.set_missing_defaults(a_step_inp, [

@@ -38,7 +38,8 @@ describe Steplib::WorkflowUtils do
 				'title' => 'output title',
 				'description' => 'output description',
 				'mapped_to' => 'OUT_ENV'
-				}]
+				}],
+			'log_highlights' => []
 			}
 		#
 		@valid_steplib_step_version_2 = Steplib::HashUtils.deep_copy(@valid_steplib_step_version_1)

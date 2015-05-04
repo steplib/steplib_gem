@@ -46,57 +46,65 @@ describe Steplib::WorkflowUpdater do
 				'title' => 'output title',
 				'description' => 'output description',
 				'mapped_to' => 'OUT_ENV'
+				}],
+			'log_highlights' => [{
+				'search_pattern' => '/a pattern/',
+				'highlight_type' => 'error'
 				}]
 			}
 		@valid_workflow_data = {
-				'format_version' => '0.9.0',
-				'environments' => [{
-					'title' => 'env title',
-					'mapped_to' => 'ENV_VAR',
+			'format_version' => '0.9.0',
+			'environments' => [{
+				'title' => 'env title',
+				'mapped_to' => 'ENV_VAR',
+				'is_expand' => false,
+				'value' => 'Value of the env var'
+				}],
+			'steps' => [{
+				#
+				# workflow format specific
+				'position_in_workflow' => 0,
+				'is_always_run' => false,
+				#
+				# steplib format specific
+				## auto generated
+				'id' => 'step-id',
+				'steplib_source' => 'https://github.com/steplib/steplib',
+				'version_tag' => '1.0.0',
+				## data from step.yml
+				'name' => 'step name - can be changed by the user',
+				'description' => 'step description',
+				'website' => 'http://...',
+				'fork_url' => 'http://...',
+				'icon_url_256' => 'https://...',
+				'source' => {
+					'git' => 'http://...'
+				},
+				'host_os_tags' => ['osx-10.9'],
+				'project_type_tags' => ['ios'],
+				'type_tags' => ['test'],
+				'is_requires_admin_user' => true,
+				'inputs' => [{
+					'title' => 'input title',
+					'description' => 'input description',
+					'mapped_to' => 'TEST_ENV',
 					'is_expand' => false,
-					'value' => 'Value of the env var'
+					'is_required' => false,
+					'value_options' => ['val1', 'val2'],
+					'value' => 'input value',
+					'is_dont_change_value' => false
 					}],
-				'steps' => [{
-					#
-					# workflow format specific
-					'position_in_workflow' => 0,
-					'is_always_run' => false,
-					#
-					# steplib format specific
-					## auto generated
-					'id' => 'step-id',
-					'steplib_source' => 'https://github.com/steplib/steplib',
-					'version_tag' => '1.0.0',
-					## data from step.yml
-					'name' => 'step name - can be changed by the user',
-					'description' => 'step description',
-					'website' => 'http://...',
-					'fork_url' => 'http://...',
-					'icon_url_256' => 'https://...',
-					'source' => {
-						'git' => 'http://...'
-					},
-					'host_os_tags' => ['osx-10.9'],
-					'project_type_tags' => ['ios'],
-					'type_tags' => ['test'],
-					'is_requires_admin_user' => true,
-					'inputs' => [{
-						'title' => 'input title',
-						'description' => 'input description',
-						'mapped_to' => 'TEST_ENV',
-						'is_expand' => false,
-						'is_required' => false,
-						'value_options' => ['val1', 'val2'],
-						'value' => 'input value',
-						'is_dont_change_value' => false
-						}],
-					'outputs' => [{
-						'title' => 'output title',
-						'description' => 'output description',
-						'mapped_to' => 'OUT_ENV'
-						}]
+				'outputs' => [{
+					'title' => 'output title',
+					'description' => 'output description',
+					'mapped_to' => 'OUT_ENV'
+					}],
+				'log_highlights' => [{
+					'search_pattern' => '/a pattern/',
+					'highlight_type' => 'error'
 					}]
-				}
+				}],
+			}
 	end
 
 	describe 'example data validity check' do
